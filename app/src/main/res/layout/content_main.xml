@@ -65,4 +65,5 @@
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/textLightAvailable"
         android:layout_alignEnd="@+id/textLightAvailable" />
+
 </RelativeLayout>

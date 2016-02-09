@@ -1,6 +1,7 @@
 package com.example.johannesklint.spotifyapitest;
 
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -25,19 +26,26 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import org.w3c.dom.Text;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback {
 
     private static final String CLIENT_ID = "c630fe9a50b94f27ab408ae38e9e6fdc";
     private static final String REDIRECT_URI = "ourfirstappfromschool://callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-    Player player;
-    Button pauseBtn;
-    Button playBtn;
-    Button lightBtn;
-    TextView textLight_available, textLight_reading;
-    SensorManager mySensorManager;
-    android.hardware.Sensor lightSensor;
+    private Player player;
+    private Button pauseBtn;
+    private Button playBtn;
+    private Button lightBtn;
+    private TextView textLight_available, textLight_reading;
+    private SensorManager mySensorManager;
+    private android.hardware.Sensor lightSensor;
+    private boolean songIsPlaying;
+    private float previousValue;
+
 
 
     @Override
@@ -78,9 +86,11 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
         lightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                seeLight();
+                seeIfLightIsWorking();
             }
         });
+
+
 
     }
 
@@ -109,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
                 });
             }
         }
-
     }
-    public void seeLight() {
+
+    public void seeIfLightIsWorking() {
 
         textLight_available = (TextView) findViewById(R.id.textLightAvailable);
         textLight_reading = (TextView) findViewById(R.id.textLightReading);
@@ -129,22 +139,26 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
     }
 
-    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+    final SensorEventListener LightSensorListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
 
-            if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
-                textLight_reading.setText("LIGHT: " + event.values[0]);
-                if(event.values[0] < 200){
-                    Log.d("MainActivity", "under 200");
-                    mPlayer.play("spotify:track:5UJhGHTejeId8sd04ypvam");
+            float currentValue = event.values[0];
 
-                }else{
-                    Log.d("MainActivity", "over 200");
-                    mPlayer.play("spotify:track:3Rz5Yvye8XaUGUjz4U72S9");
+                if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
+                    textLight_reading.setText("LIGHT: " + event.values[0]);
 
+                    if (currentValue < 200 && songIsPlaying == false) {
+                        Log.v("MainActivity", "under 200");
+                        mPlayer.play("spotify:track:5UJhGHTejeId8sd04ypvam");
+                        songIsPlaying = true;
+                    } else if(currentValue > 200 && songIsPlaying == false){
+                        Log.v("MainActivity", "over 200");
+                        mPlayer.play("spotify:track:3Rz5Yvye8XaUGUjz4U72S9");
+                        songIsPlaying = true;
+                    }
                 }
-            }
+            previousValue = currentValue;
         }
 
         @Override
@@ -152,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
         }
     };
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,33 +186,33 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
     @Override
     public void onLoggedIn() {
         Toast.makeText(MainActivity.this, "User logged in", Toast.LENGTH_SHORT).show();
-        Log.d("MainActivity", "User logged in");
+        Log.v("MainActivity", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.v("MainActivity", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable throwable) {
         Toast.makeText(MainActivity.this, "\"Login failed", Toast.LENGTH_SHORT).show();
-        Log.d("MainActivity", "Login failed");
+        Log.v("MainActivity", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.v("MainActivity", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String s) {
-        Log.d("MainActivity", "Received connection message: " + s);
+        Log.v("MainActivity", "Received connection message: " + s);
     }
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
+        Log.v("MainActivity", "Playback event received: " + eventType.name());
         switch (eventType) {
             // Handle event type as necessary
             default:
@@ -207,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
     @Override
     public void onPlaybackError(ErrorType errorType, String s) {
-        Log.d("MainActivity", "Playback error received: " + errorType.name());
+        Log.v("MainActivity", "Playback error received: " + errorType.name());
         switch (errorType) {
             // Handle error type as necessary
             default:
