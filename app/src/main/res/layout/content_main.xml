@@ -10,7 +10,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.johannesklint.spotifyapitest.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:background="@drawable/white">
+
 
     <Button
         android:layout_width="wrap_content"
@@ -54,4 +56,13 @@
         android:layout_below="@+id/textLightAvailable"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="46dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Light"
+        android:id="@+id/lightBtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/textLightAvailable"
+        android:layout_alignEnd="@+id/textLightAvailable" />
 </RelativeLayout>

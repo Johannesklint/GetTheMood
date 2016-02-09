@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
     Player player;
     Button pauseBtn;
     Button playBtn;
+    Button lightBtn;
     TextView textLight_available, textLight_reading;
     SensorManager mySensorManager;
     android.hardware.Sensor lightSensor;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
         pauseBtn = (Button)findViewById(R.id.pauseBtn);
         playBtn = (Button)findViewById(R.id.playBtn);
+        lightBtn = (Button)findViewById(R.id.lightBtn);
 
         pauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,11 +71,16 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlayer.resume();
+                mPlayer.play("spotify:track:5UJhGHTejeId8sd04ypvam");
             }
         });
 
-        seeLight();
+        lightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seeLight();
+            }
+        });
 
     }
 
@@ -89,11 +96,9 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
                 Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                     @Override
                     public void onInitialized(Player player) {
-                      /*  mPlayer = player;
+                        mPlayer = player;
                         mPlayer.addConnectionStateCallback(MainActivity.this);
                         mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                        //play() is playing the track that is put there
-                        mPlayer.play("spotify:track:14BbMix6AU2KV6ne3DF6vw");*/
 
                     }
 
@@ -106,26 +111,60 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
         }
 
     }
+    public void seeLight() {
+
+        textLight_available = (TextView) findViewById(R.id.textLightAvailable);
+        textLight_reading = (TextView) findViewById(R.id.textLightReading);
+
+        mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        lightSensor = mySensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LIGHT);
+
+        if (lightSensor != null) {
+            textLight_available.setText("Light sensor is working");
+            mySensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }else{
+            textLight_available.setText("Light sensor NOT working");
+        }
+
+    }
+
+    private final SensorEventListener LightSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
+                textLight_reading.setText("LIGHT: " + event.values[0]);
+                if(event.values[0] < 200){
+                    Log.d("MainActivity", "under 200");
+                    mPlayer.play("spotify:track:5UJhGHTejeId8sd04ypvam");
+
+                }else{
+                    Log.d("MainActivity", "over 200");
+                    mPlayer.play("spotify:track:3Rz5Yvye8XaUGUjz4U72S9");
+
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(android.hardware.Sensor sensor, int accuracy) {
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -182,51 +221,5 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
         super.onDestroy();
     }
 
-    public void seeLight() {
 
-        textLight_available = (TextView) findViewById(R.id.textLightAvailable);
-        textLight_reading = (TextView) findViewById(R.id.textLightReading);
-
-        mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
-        lightSensor = mySensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LIGHT);
-
-        if (lightSensor != null) {
-            textLight_available.setText("Light sensor is working");
-            mySensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            textLight_available.setText("Light sensor NOT working");
-        }
-
-    }
-
-    private final SensorEventListener LightSensorListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-
-            if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
-                textLight_reading.setText("LIGHT: " + event.values[0]);
-                if(event.values[0] < 200){
-                    mPlayer = player;
-                    mPlayer.addConnectionStateCallback(MainActivity.this);
-                    mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                    //play() is playing the track that is put there
-
-                    mPlayer.play("spotify:track:6IxR1EsRvi90SvuP1XWlCE");
-                }else{
-                    mPlayer = player;
-                    mPlayer.addConnectionStateCallback(MainActivity.this);
-                    mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                    //play() is playing the track that is put there
-
-                    mPlayer.play("spotify:track:3Rz5Yvye8XaUGUjz4U72S9");
-                }
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(android.hardware.Sensor sensor, int accuracy) {
-
-        }
-    };
 }
