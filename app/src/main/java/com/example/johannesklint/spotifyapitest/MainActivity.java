@@ -28,7 +28,9 @@ import com.spotify.sdk.android.player.Spotify;
 
 import org.w3c.dom.Text;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 public class MainActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -45,8 +47,9 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
     private android.hardware.Sensor lightSensor;
     private boolean songIsPlaying;
     private float previousValue;
-
-
+    private ArrayList<String> lightList;
+    private ArrayList<String> darkList;
+    private Button nextBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +93,13 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
             }
         });
 
-
-
+        nextBtn = (Button)findViewById(R.id.nextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayer.skipToNext();
+            }
+        });
     }
 
     @Override
@@ -120,6 +128,31 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
             }
         }
     }
+
+    public void lightPlayList(){
+        lightList = new ArrayList<String>();
+
+        lightList.add("spotify:track:4AWo1MuDaBGRiIqpjFzVfW");
+        lightList.add("spotify:track:6pkjW5srxjzRSKKMrl7et8");
+        lightList.add("spotify:track:58ZVxvtCUBeVONNAttWMHX");
+
+        Collections.shuffle(lightList);
+
+        mPlayer.play(lightList);
+
+    }
+
+    public void darkPlayList(){
+        darkList = new ArrayList<String>();
+
+        darkList.add("spotify:track:3SLJvq2HH1UvPyL7CF7Auh");
+        darkList.add("spotify:track:58ZVxvtCUBeVONNAttWMHX");
+
+        Collections.shuffle(darkList);
+
+        mPlayer.play(darkList);
+    }
+
 
     public void seeIfLightIsWorking() {
 
@@ -150,11 +183,11 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
                     if (currentValue < 200 && songIsPlaying == false) {
                         Log.v("MainActivity", "under 200");
-                        mPlayer.play("spotify:track:5UJhGHTejeId8sd04ypvam");
+                        darkPlayList();
                         songIsPlaying = true;
                     } else if(currentValue > 200 && songIsPlaying == false){
                         Log.v("MainActivity", "over 200");
-                        mPlayer.play("spotify:track:3Rz5Yvye8XaUGUjz4U72S9");
+                        lightPlayList();
                         songIsPlaying = true;
                     }
                 }
@@ -166,22 +199,6 @@ public class MainActivity extends AppCompatActivity implements PlayerNotificatio
 
         }
     };
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onLoggedIn() {
