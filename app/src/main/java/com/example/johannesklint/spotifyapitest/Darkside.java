@@ -3,18 +3,12 @@ package com.example.johannesklint.spotifyapitest;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -30,7 +24,7 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Darkside extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback {
+public class Darkside extends MainActivity implements PlayerNotificationCallback, ConnectionStateCallback {
 
     private static final String CLIENT_ID = "c630fe9a50b94f27ab408ae38e9e6fdc";
     private static final String REDIRECT_URI = "ourfirstappfromschool://callback";
@@ -85,6 +79,7 @@ public class Darkside extends AppCompatActivity implements PlayerNotificationCal
             }
         });
 
+        //Accelerometer initiated
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -105,7 +100,6 @@ public class Darkside extends AppCompatActivity implements PlayerNotificationCal
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
@@ -116,7 +110,6 @@ public class Darkside extends AppCompatActivity implements PlayerNotificationCal
                         mPlayer = player;
                         mPlayer.addConnectionStateCallback(Darkside.this);
                         mPlayer.addPlayerNotificationCallback(Darkside.this);
-
                     }
 
                     @Override
@@ -128,10 +121,8 @@ public class Darkside extends AppCompatActivity implements PlayerNotificationCal
         }
     }
 
-
     public void darkPlayList(){
-        darkList = new ArrayList<String>();
-
+        darkList = new ArrayList<>();
         darkList.add("spotify:track:3SLJvq2HH1UvPyL7CF7Auh");
         darkList.add("spotify:track:58ZVxvtCUBeVONNAttWMHX");
 

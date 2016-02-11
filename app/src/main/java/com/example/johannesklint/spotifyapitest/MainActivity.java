@@ -5,11 +5,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +57,6 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void seeIfLightIsWorking() {
-
         mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         lightSensor = mySensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_LIGHT);
         mySensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -84,5 +88,28 @@ public class MainActivity extends AppCompatActivity  {
 
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            return true;
+        }else if(id == R.id.action_about){
+            Intent intent = new Intent(getApplicationContext(), About.class);
+            startActivity(intent);
+        }else if(id == R.id.action_settings){
+            startActivityForResult(new Intent(Settings.ACTION_APPLICATION_SETTINGS),0);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

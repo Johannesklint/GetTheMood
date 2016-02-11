@@ -7,14 +7,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -30,7 +26,7 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Main2Activity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback, SensorEventListener {
+public class Main2Activity extends MainActivity implements PlayerNotificationCallback, ConnectionStateCallback, SensorEventListener {
 
     private static final String CLIENT_ID = "c630fe9a50b94f27ab408ae38e9e6fdc";
     private static final String REDIRECT_URI = "ourfirstappfromschool://callback";
@@ -40,8 +36,6 @@ public class Main2Activity extends AppCompatActivity implements PlayerNotificati
     private Button playBtn;
     private ArrayList<String> lightList;
     private Button nextBtn;
-    private boolean isShowing;
-    private float previousValue;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
@@ -117,7 +111,6 @@ public class Main2Activity extends AppCompatActivity implements PlayerNotificati
                         mPlayer = player;
                         mPlayer.addConnectionStateCallback(Main2Activity.this);
                         mPlayer.addPlayerNotificationCallback(Main2Activity.this);
-
                     }
 
                     @Override
@@ -130,16 +123,14 @@ public class Main2Activity extends AppCompatActivity implements PlayerNotificati
     }
 
     public void lightPlayList(){
-        lightList = new ArrayList<String>();
+        lightList = new ArrayList<>();
 
         lightList.add("spotify:track:4AWo1MuDaBGRiIqpjFzVfW");
         lightList.add("spotify:track:6pkjW5srxjzRSKKMrl7et8");
         lightList.add("spotify:track:58ZVxvtCUBeVONNAttWMHX");
 
         Collections.shuffle(lightList);
-
         mPlayer.play(lightList);
-
     }
 
     @Override
@@ -209,7 +200,7 @@ public class Main2Activity extends AppCompatActivity implements PlayerNotificati
     public void onResume() {
         super.onResume();
         // Add the following line to register the Session Manager Listener onResume
-        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -218,4 +209,6 @@ public class Main2Activity extends AppCompatActivity implements PlayerNotificati
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
     }
+
+
 }
