@@ -1,4 +1,4 @@
-package com.example.johannesklint.spotifyapitest;
+package com.example.johannesklint.spotifyapitest.main;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.johannesklint.spotifyapitest.MainActivity;
+import com.example.johannesklint.spotifyapitest.R;
 
 public class About extends MainActivity {
 

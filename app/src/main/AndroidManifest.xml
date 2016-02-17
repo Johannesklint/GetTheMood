@@ -25,17 +25,17 @@
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".Main2Activity"
+            android:name=".main.Main2Activity"
             android:label="@string/title_activity_main2"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Darkside"
+            android:name=".main.Darkside"
             android:label="@string/title_activity_darkside"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".About"
+            android:name=".main.About"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

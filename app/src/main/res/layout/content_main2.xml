@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.johannesklint.spotifyapitest.Main2Activity"
+    tools:context=".main.Main2Activity"
     tools:showIn="@layout/activity_main2"
     android:background="@drawable/lightside">
     <Button
@@ -47,4 +47,26 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="68dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/artistName"
+        android:layout_below="@+id/nextBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/title"
+        android:layout_below="@+id/artistName"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"/>
+
 </RelativeLayout>

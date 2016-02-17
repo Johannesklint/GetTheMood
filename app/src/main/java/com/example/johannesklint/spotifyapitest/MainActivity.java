@@ -6,33 +6,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerNotificationCallback;
-import com.spotify.sdk.android.player.PlayerState;
-import com.spotify.sdk.android.player.Spotify;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import com.example.johannesklint.spotifyapitest.main.About;
+import com.example.johannesklint.spotifyapitest.main.Darkside;
+import com.example.johannesklint.spotifyapitest.main.Main2Activity;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private Button lightBtn;
     private SensorManager mySensorManager;
@@ -70,11 +56,11 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
 
-                    if (currentValue < 200 && ifBoolean == false) {
+                    if (currentValue < 300 && ifBoolean == false) {
                         Intent intent = new Intent(getApplicationContext(), Darkside.class);
                         startActivity(intent);
                         ifBoolean = true;
-                    } else if(currentValue > 200 && ifBoolean == false){
+                    } else if(currentValue > 300 && ifBoolean == false){
                         Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
                         startActivity(intent);
                         ifBoolean = true;

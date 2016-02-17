@@ -4,4 +4,5 @@
     <string name="title_activity_main2">Get The Mood</string>
     <string name="title_activity_darkside">Get The Mood</string>
     <string name="title_activity_about">About</string>
+    <string name="title_activity_show_song">ShowSong</string>
 </resources>

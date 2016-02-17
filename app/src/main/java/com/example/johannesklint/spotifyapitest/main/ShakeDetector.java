@@ -1,4 +1,4 @@
-package com.example.johannesklint.spotifyapitest;
+package com.example.johannesklint.spotifyapitest.main;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
