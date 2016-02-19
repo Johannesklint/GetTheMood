@@ -48,22 +48,18 @@ public class SpotifyService extends Service {
                 String endPoint = String.format("https://api.spotify.com/v1/tracks/%s", track);
 
                 try {
-                    Log.v("JSONRESULT", "Start");
                     URL url = new URL(endPoint);
 
                     URLConnection urlConnection = url.openConnection();
 
                     InputStream inputStream = urlConnection.getInputStream();
-                    Log.v("JSONRESULT", "Middle");
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
                     StringBuilder result = new StringBuilder();
                     String line;
-                    Log.v("JSONRESULT", "Innan while");
                     while((line = bufferedReader.readLine()) != null){
                         result.append(line);
                     }
-                    Log.v("JSONRESULT", result.toString());
                     return result.toString();
 
                 } catch (MalformedURLException e) {
@@ -81,23 +77,17 @@ public class SpotifyService extends Service {
                     apiCallback.serviceFailure(error);
                     return;
                 }
-                Log.v("JSONRESULT", "POST"+s);
-
                 JSONObject data = null;
                 try {
                     data = new JSONObject(s);
 
                     JSONObject queryResults = data;
 
-                    Log.v("JSONRESULT DATA", data.toString());
-
                     Album album = new Album();
                     Artist artist = new Artist();
 
                     album.populate(queryResults);
                     artist.populate(queryResults);
-
-                    Log.v("JSONRESULT AFTER","Everything is fine");
 
                     apiCallback.serviceSucces(artist, album);
                 } catch (JSONException e) {

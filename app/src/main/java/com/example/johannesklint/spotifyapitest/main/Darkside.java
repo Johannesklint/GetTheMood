@@ -34,13 +34,19 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This acitivty is for when it's dark
+ * Press "Play" to play the list
+ * Press "Stop" to stop playinh
+ * Press "Next" to change song OR shake the device
+ */
 public class Darkside extends MainActivity implements PlayerNotificationCallback, ConnectionStateCallback, SensorEventListener, APICallback {
 
     private static final String CLIENT_ID = "c630fe9a50b94f27ab408ae38e9e6fdc";
     private static final String REDIRECT_URI = "ourfirstappfromschool://callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-    private Button pauseBtn;
+    private Button stopBtn;
     private Button playBtn;
     private ArrayList<String> darkList;
     private Button nextBtn;
@@ -53,12 +59,15 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
 
     public Darkside() {
         darkList = new ArrayList<>();
-        darkList.add("7fSGbZLhWlAiCC3HDPAULu");
-        darkList.add("58ZVxvtCUBeVONNAttWMHX");
-        darkList.add("3SLJvq2HH1UvPyL7CF7Auh");
-        darkList.add("2cJhhpxflevAtPFku1kxID");
-        darkList.add("0h7XctDSx1YSQGnKqILAQW");
+        darkList.add("1brwdYwjltrJo7WHpIvbYt");
+        darkList.add("3WEmAizxrtQwXEJQRwCrK1");
+        darkList.add("3NBDgwEAGMj0aKRsU8zoO9");
+        darkList.add("7fPHfBCyKE3aVCBjE4DAvl");
+        darkList.add("2779sByIJexX6nBSXEJsVP");
+    }
 
+    public ArrayList<String> getDarkList() {
+        return darkList;
     }
 
     @Override
@@ -70,12 +79,31 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
 
         logInInitiated();
 
-        pauseBtn = (Button)findViewById(R.id.pauseBtn);
+        stopBtn = (Button)findViewById(R.id.stopBtn);
         playBtn = (Button)findViewById(R.id.playBtn);
+        nextBtn = (Button)findViewById(R.id.nextBtn);
         artistName = (TextView)findViewById(R.id.artistName);
         title = (TextView)findViewById(R.id.title);
 
-        pauseBtn.setOnClickListener(new View.OnClickListener() {
+        buttonsActions();
+
+        //Accelerometer initiated
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                playMusic();
+            }
+        });
+
+    }
+
+    public void buttonsActions(){
+        stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPlayer.pause();
@@ -89,30 +117,12 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
             }
         });
 
-        nextBtn = (Button)findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playMusic();
-                Log.v("Darkside", "PRESSED NEXT - SONG CHANGED");
             }
         });
-
-        //Accelerometer initiated
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mShakeDetector = new ShakeDetector();
-        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-
-            @Override
-            public void onShake(int count) {
-                playMusic();
-                Log.v("Darkside", "SHAKE WORKS ---SONG CHANGED");
-
-            }
-        });
-
     }
 
     public void logInInitiated(){
@@ -126,8 +136,6 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -155,29 +163,27 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
     }
 
     public void playMusic(){
-        String spotifyTrack = "spotify:track:";
-
         spotifyService = new SpotifyService(this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
 
+        // spotifyTrack is needed for the API
+        String spotifyTrack = "spotify:track:";
         Collections.shuffle(darkList);
 
         mPlayer.play(spotifyTrack + darkList.get(0));
         spotifyService.writeTrack(darkList.get(0));
 
         progressDialog.hide();
-
     }
 
     @Override
     public void serviceSucces(Artist artist, Album album) {
         progressDialog.hide();
-        Log.v("JSONRESULT NAME & TITLe",artist.getArtistName().getArtistName().toString() + album.getTitle().getTitleName().toString());
+
         artistName.setText(artist.getArtistName().getArtistName());
         title.setText(album.getTitle().getTitleName());
-
     }
 
     @Override
@@ -190,33 +196,27 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
     @Override
     public void onLoggedIn() {
         Toast.makeText(Darkside.this, "User logged in", Toast.LENGTH_SHORT).show();
-        Log.v("Darkside", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.v("Darkside", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable throwable) {
         Toast.makeText(Darkside.this, "\"Login failed", Toast.LENGTH_SHORT).show();
-        Log.v("Darkside", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.v("Darkside", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String s) {
-        Log.v("Darkside", "Received connection message: " + s);
     }
 
     @Override
     public void onPlaybackEvent(PlayerNotificationCallback.EventType eventType, PlayerState playerState) {
-        Log.v("Darkside", "Playback event received: " + eventType.name());
         switch (eventType) {
             // Handle event type as necessary
             default:
@@ -226,21 +226,8 @@ public class Darkside extends MainActivity implements PlayerNotificationCallback
 
     @Override
     public void onPlaybackError(PlayerNotificationCallback.ErrorType errorType, String s) {
-        Log.v("Darkside", "Playback error received: " + errorType.name());
         switch (errorType) {
-
-            case TRACK_UNAVAILABLE:
-                Log.v("Darkside", "Playback error received: onPLaybackError ");
-                playMusic();
-                break;
-            case ERROR_PLAYBACK:
-                Log.v("Darkside", "Playback error received: onPLaybackError ");
-                playMusic();
-                break;
-            case ERROR_UNKNOWN:
-                Log.v("Darkside", "Playback error received: onPLaybackError ");
-                playMusic();
-                break;
+            // Handle event type as necessary
             default:
                 break;
         }

@@ -15,8 +15,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pause"
-        android:id="@+id/pauseBtn"
+        android:text="STOP"
+        android:id="@+id/stopBtn"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/textView"
         android:layout_toStartOf="@+id/textView" />
@@ -35,9 +35,9 @@
         android:layout_height="wrap_content"
         android:text="NEXT"
         android:id="@+id/nextBtn"
-        android:layout_below="@+id/pauseBtn"
-        android:layout_toRightOf="@+id/pauseBtn"
-        android:layout_toEndOf="@+id/pauseBtn" />
+        android:layout_below="@+id/stopBtn"
+        android:layout_toRightOf="@+id/stopBtn"
+        android:layout_toEndOf="@+id/stopBtn" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
         android:id="@+id/artistName"
         android:layout_below="@+id/nextBtn"
         android:layout_centerHorizontal="true"
@@ -63,7 +62,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
         android:id="@+id/title"
         android:layout_below="@+id/artistName"
         android:layout_centerHorizontal="true"

@@ -9,7 +9,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,13 +33,19 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This acitivty is for when it's light
+ * Press "Play" to play the list
+ * Press "Stop" to stop playinh
+ * Press "Next" to change song OR shake the device
+ */
 public class Main2Activity extends MainActivity implements PlayerNotificationCallback, ConnectionStateCallback, SensorEventListener, APICallback {
 
     private static final String CLIENT_ID = "c630fe9a50b94f27ab408ae38e9e6fdc";
     private static final String REDIRECT_URI = "ourfirstappfromschool://callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-    private Button pauseBtn;
+    private Button stopBtn;
     private Button playBtn;
     private ArrayList<String> lightList;
     private Button nextBtn;
@@ -53,9 +58,16 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
 
     public Main2Activity() {
         lightList = new ArrayList<>();
-        lightList.add("4AWo1MuDaBGRiIqpjFzVfW");
-        lightList.add("6pkjW5srxjzRSKKMrl7et8");
-        lightList.add("58ZVxvtCUBeVONNAttWMHX");
+        lightList.add("2dUueqpZlaGCxb8v1JHkb1");
+        lightList.add("5487T2CENSpU6cO4oWnxS0");
+        lightList.add("5cZFh5iWgNBZoTxrcIAd1k");
+        lightList.add("5zoDY7K6X3iGESr6r0GCVK");
+        lightList.add("1cobUl98CSA5jbsfbWhn9T");
+
+    }
+
+    public ArrayList<String> getLightList() {
+        return lightList;
     }
 
     @Override
@@ -67,32 +79,12 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
 
         logInInitiated();
 
-        pauseBtn = (Button)findViewById(R.id.pauseBtn);
+        stopBtn = (Button)findViewById(R.id.stopBtn);
         playBtn = (Button)findViewById(R.id.playBtn);
         artistName = (TextView)findViewById(R.id.artistName);
         title = (TextView)findViewById(R.id.title);
 
-        pauseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayer.pause();
-            }
-        });
-
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playMusic();
-            }
-        });
-
-        nextBtn = (Button)findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayer.skipToNext();
-            }
-        });
+        buttonsActions();
 
         //Accelerometer initiated
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -100,11 +92,9 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mShakeDetector = new ShakeDetector();
         mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-
             @Override
             public void onShake(int count) {
                 playMusic();
-                Log.v("Main", "ITS BEEN SHOOKEN");
             }
         });
     }
@@ -128,11 +118,34 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("Main2Activity", "Could not initialize player: " + throwable.getMessage());
                     }
                 });
             }
         }
+    }
+
+    public void buttonsActions(){
+        stopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayer.pause();
+            }
+        });
+
+        playBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playMusic();
+            }
+        });
+
+        nextBtn = (Button)findViewById(R.id.nextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playMusic();
+            }
+        });
     }
 
     public void logInInitiated(){
@@ -142,19 +155,18 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
 
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
-
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
     }
 
     public void playMusic(){
-        String spotifyTrack = "spotify:track:";
-        Collections.shuffle(lightList);
-
         spotifyService = new SpotifyService(this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
+
+        // spotifyTrack is needed for the API
+        String spotifyTrack = "spotify:track:";
+        Collections.shuffle(lightList);
 
         mPlayer.play(spotifyTrack + lightList.get(0));
         spotifyService.writeTrack(lightList.get(0));
@@ -165,9 +177,6 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
     @Override
     public void serviceSucces(Artist artist, Album album) {
         progressDialog.hide();
-        Log.v("JSONRESULT NAME & TITLe", artist.getArtistName().getArtistName().toString() + album.getTitle().getTitleName().toString());
-
-        //insert play icon
 
         artistName.setText("\u2981" + artist.getArtistName().getArtistName());
         title.setText(album.getTitle().getTitleName());
@@ -182,33 +191,27 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
     @Override
     public void onLoggedIn() {
         Toast.makeText(Main2Activity.this, "User logged in", Toast.LENGTH_SHORT).show();
-        Log.v("Main2Activity", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.v("Main2Activity", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable throwable) {
         Toast.makeText(Main2Activity.this, "\"Login failed", Toast.LENGTH_SHORT).show();
-        Log.v("Main2Activity", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.v("Main2Activity", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String s) {
-        Log.v("Main2Activity", "Received connection message: " + s);
     }
 
     @Override
     public void onPlaybackEvent(PlayerNotificationCallback.EventType eventType, PlayerState playerState) {
-        Log.v("Main2Activity", "Playback event received: " + eventType.name());
         switch (eventType) {
             // Handle event type as necessary
             default:
@@ -218,7 +221,6 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
 
     @Override
     public void onPlaybackError(PlayerNotificationCallback.ErrorType errorType, String s) {
-        Log.v("Main2Activity", "Playback error received: " + errorType.name());
         switch (errorType) {
             // Handle error type as necessary
             default:
@@ -245,15 +247,14 @@ public class Main2Activity extends MainActivity implements PlayerNotificationCal
     @Override
     public void onResume() {
         super.onResume();
-        // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     public void onPause() {
-        // Add the following line to unregister the Sensor Manager onPause
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
+
     }
 
 

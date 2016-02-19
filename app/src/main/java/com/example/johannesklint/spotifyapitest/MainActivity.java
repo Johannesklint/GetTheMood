@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +22,9 @@ import com.example.johannesklint.spotifyapitest.main.Main2Activity;
 public class MainActivity extends AppCompatActivity {
 
     private Button lightBtn;
-    private SensorManager mySensorManager;
-    private android.hardware.Sensor lightSensor;
+    public  SensorManager mySensorManager;
+    public android.hardware.Sensor lightSensor;
     private boolean ifBoolean;
-    private float previousValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +48,28 @@ public class MainActivity extends AppCompatActivity {
         mySensorManager.registerListener(LightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    final SensorEventListener LightSensorListener = new SensorEventListener() {
+     SensorEventListener LightSensorListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-
             float currentValue = event.values[0];
+            ifBoolean = false; //needs boolean to change activitys
 
                 if (event.sensor.getType() == android.hardware.Sensor.TYPE_LIGHT) {
 
                     if (currentValue < 300 && ifBoolean == false) {
                         Intent intent = new Intent(getApplicationContext(), Darkside.class);
+                        mySensorManager.unregisterListener(this);
                         startActivity(intent);
                         ifBoolean = true;
+
                     } else if(currentValue > 300 && ifBoolean == false){
                         Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+                        mySensorManager.unregisterListener(this);
                         startActivity(intent);
                         ifBoolean = true;
                     }
                 }
-            previousValue = currentValue;
+
         }
 
         @Override
